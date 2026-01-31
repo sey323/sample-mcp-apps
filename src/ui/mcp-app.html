@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Get Time App</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: "Inter", "Noto Sans JP", system-ui, sans-serif;
+      }
+
+      body {
+        margin: 0;
+        padding: 24px;
+        background: #0b0b0d;
+        color: #f5f5f7;
+      }
+
+      main {
+        max-width: 480px;
+        display: grid;
+        gap: 16px;
+      }
+
+      .time {
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .time code {
+        font-size: 0.95rem;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background: #1f1f23;
+      }
+
+      button {
+        align-self: flex-start;
+        padding: 10px 16px;
+        border-radius: 8px;
+        border: 1px solid #3a3a3f;
+        background: #ffffff;
+        color: #111;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      button:hover {
+        opacity: 0.9;
+      }
+
+      .hint {
+        font-size: 0.85rem;
+        color: #b0b0b8;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="time" aria-live="polite">
+        <span>現在時刻:</span>
+        <code id="server-time">Loading...</code>
+      </section>
+      <p class="hint">ボタンを押すとサーバー時間を更新します。</p>
+      <button id="get-time-btn" type="button">サーバー時間を取得</button>
+    </main>
+    <script type="module" src="/src/ui/index.ts"></script>
+  </body>
+</html>

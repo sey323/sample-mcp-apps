@@ -10,20 +10,19 @@ import path from "node:path";
 const DIST_DIR = path.join(import.meta.dirname, "dist");
 
 /**
- * Creates a new MCP server instance with tools and resources registered.
+ * Toolと表示するUI Resourceを登録するMCPサーバーを作成
  */
 export function createServer(): McpServer {
   const server = new McpServer({
-    name: "Quickstart MCP App Server",
+    name: "MCP App Server",
     version: "1.0.0",
   });
 
-  // Two-part registration: tool + resource, tied together by the resource URI.
+  // Toolに表示するUI ResourceのURIを設定。ToolとResourceの両方で同じUIを設定する
   const resourceUri = "ui://get-time/mcp-app.html";
 
-  // Register a tool with UI metadata. When the host calls this tool, it reads
-  // `_meta.ui.resourceUri` to know which resource to fetch and render as an
-  // interactive UI.
+  // UIのResourceをToolの`meta.ui.resourceUri`に設定する
+  // Toolは呼び出されたとき`meta.ui.resourceUri`を参照し、UIをチャット上にレンダリングする。
   registerAppTool(
     server,
     "get-time",
@@ -31,25 +30,24 @@ export function createServer(): McpServer {
       title: "Get Time",
       description: "Returns the current server time.",
       inputSchema: {},
-      _meta: { ui: { resourceUri } }, // Links this tool to its UI resource
+      _meta: { ui: { resourceUri } }, // Resourceの設定
     },
     async () => {
-      const time = new Date().toISOString();
+      // 日本時間を返却するTool
+      const time = new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" });
       return { content: [{ type: "text", text: time }] };
     },
   );
 
-  // Register the resource, which returns the bundled HTML/JavaScript for the UI.
+  // 表示するUIリソースを設定。viteでビルドされた mcp-app.htmlを
+  // チャット画面に表示されるResourceとして登録する
   registerAppResource(
     server,
     resourceUri,
     resourceUri,
     { mimeType: RESOURCE_MIME_TYPE },
     async () => {
-      const html = await fs.readFile(
-        path.join(DIST_DIR, "mcp-app.html"),
-        "utf-8",
-      );
+      const html = await fs.readFile(path.join(DIST_DIR, "mcp-app.html"), "utf-8");
 
       return {
         contents: [

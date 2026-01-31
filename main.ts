@@ -7,21 +7,23 @@ import type { Request, Response } from "express";
 import { createServer } from "./server.js";
 
 /**
- * Starts an MCP server with Streamable HTTP transport in stateless mode.
- *
- * @param createServer - Factory function that creates a new McpServer instance per request.
+ * Expressを利用してStreamable HTTPを利用したMCPサーバーを起動する
+ * リクエストごとに新しいMCP Serverインスタンスを作成する
  */
 export async function startStreamableHTTPServer(
   createServer: () => McpServer,
 ): Promise<void> {
   const port = parseInt(process.env.PORT ?? "3001", 10);
 
+  // MCP用のExpressのアプリを作成。MPC用にJSON-RPC用のエントリーポイントを提供する
   const app = createMcpExpressApp({ host: "0.0.0.0" });
   app.use(cors());
 
   app.all("/mcp", async (req: Request, res: Response) => {
     const server = createServer();
     const transport = new StreamableHTTPServerTransport({
+      // SessionIdを維持することで過去の会話の状態を維持できるが、
+      // 今回はシンプルなサービスでセッションを維持する必要がないのでステートレスな運用
       sessionIdGenerator: undefined,
     });
 
@@ -62,23 +64,8 @@ export async function startStreamableHTTPServer(
   process.on("SIGTERM", shutdown);
 }
 
-/**
- * Starts an MCP server with stdio transport.
- *
- * @param createServer - Factory function that creates a new McpServer instance.
- */
-export async function startStdioServer(
-  createServer: () => McpServer,
-): Promise<void> {
-  await createServer().connect(new StdioServerTransport());
-}
-
 async function main() {
-  if (process.argv.includes("--stdio")) {
-    await startStdioServer(createServer);
-  } else {
-    await startStreamableHTTPServer(createServer);
-  }
+  await startStreamableHTTPServer(createServer);
 }
 
 main().catch((e) => {

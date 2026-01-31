@@ -3,11 +3,11 @@ import { registerGetTimeResource } from "./resources/registerGetTimeResource.js"
 import { registerGetTimeTool } from "./tools/registerGetTimeTool.js";
 
 /**
- * Creates a new MCP server instance with tools and resources registered.
+ * Toolと表示するUI Resourceを登録するMCPサーバーを作成
  */
 export function createServer(): McpServer {
   const server = new McpServer({
-    name: "Quickstart MCP App Server",
+    name: "MCP App Server",
     version: "1.0.0",
   });
 

@@ -1,27 +1,28 @@
 import { createMcpExpressApp } from "@modelcontextprotocol/sdk/server/express.js";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import cors from "cors";
 import type { Request, Response } from "express";
 import { createServer } from "./src/server/createServer.js";
 
 /**
- * Starts an MCP server with Streamable HTTP transport in stateless mode.
- *
- * @param createServer - Factory function that creates a new McpServer instance per request.
+ * Expressを利用してStreamable HTTPを利用したMCPサーバーを起動する
+ * リクエストごとに新しいMCP Serverインスタンスを作成する
  */
 export async function startStreamableHTTPServer(
   createServer: () => McpServer,
 ): Promise<void> {
   const port = parseInt(process.env.PORT ?? "3001", 10);
 
+  // MCP用のExpressのアプリを作成。MPC用にJSON-RPC用のエントリーポイントを提供する
   const app = createMcpExpressApp({ host: "0.0.0.0" });
   app.use(cors());
 
   app.all("/mcp", async (req: Request, res: Response) => {
     const server = createServer();
     const transport = new StreamableHTTPServerTransport({
+      // SessionIdを維持することで過去の会話の状態を維持できるが、
+      // 今回はシンプルなサービスでセッションを維持する必要がないのでステートレスな運用
       sessionIdGenerator: undefined,
     });
 

@@ -7,7 +7,13 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { DIST_DIR, RESOURCE_URI } from "../constants.js";
 
+/**
+ * "Get Time" UI ResourceをMCPサーバーに登録する
+ * @param server MCPサーバーインスタンス
+ */
 export function registerGetTimeResource(server: McpServer) {
+  // 表示するUIリソースを設定。viteでビルドされた mcp-app.htmlを
+  // チャット画面に表示されるResourceとして登録する
   registerAppResource(
     server,
     RESOURCE_URI,

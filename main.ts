@@ -62,23 +62,8 @@ export async function startStreamableHTTPServer(
   process.on("SIGTERM", shutdown);
 }
 
-/**
- * Starts an MCP server with stdio transport.
- *
- * @param createServer - Factory function that creates a new McpServer instance.
- */
-export async function startStdioServer(
-  createServer: () => McpServer,
-): Promise<void> {
-  await createServer().connect(new StdioServerTransport());
-}
-
 async function main() {
-  if (process.argv.includes("--stdio")) {
-    await startStdioServer(createServer);
-  } else {
-    await startStreamableHTTPServer(createServer);
-  }
+  await startStreamableHTTPServer(createServer);
 }
 
 main().catch((e) => {
